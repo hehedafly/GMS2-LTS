@@ -114,16 +114,24 @@ if(type=="server"){//更新客户端连接状态
 						log_id=file_text_open_append(log_name);
 						file_text_write_string(log_id,"step action record");
 						file_text_writeln(log_id);
-					}
-					if(log_id!=-1){
 						file_text_write_string(log_id, "command send: all goto "+string(temp_room));
 						file_text_writeln(log_id);
 					}
 
 					
 					//for(var j=0; j<array_length(room_asset); j++){if(room_get_name(room_asset[j])==temp_command_array[0]){temp_room=room_get_name(room_asset[j])}}
-					data_send_all(["room_goto;"+temp_room], json_stringify([buffer_string]), 0);ds_map_clear(client_apply_map);
-					for(var j=0; j<array_length(room_asset); j++){if(room_get_name(room_asset[j])==temp_command_array[0]){room_goto(room_asset[j]);}}
+					data_send_all(["room_goto;"+string(temp_room)], json_stringify([buffer_string]), 0);ds_map_clear(client_apply_map);
+					for(var j=0; j<array_length(room_asset); j++){
+						if(room_get_name(room_asset[j])==temp_command_array[0]){
+							
+							if(log_id==-1){
+								log_id=file_text_open_append(log_name);
+								file_text_write_string(log_id,"data send to all client, server enter room "+room_get_name(room_asset[j]));
+								file_text_writeln(log_id);
+							}
+							room_goto(room_asset[j]);
+						}
+					}
 					break;
 				}
 				if(temp_command_array[i]!=temp_command_array[i+1]){break;}
